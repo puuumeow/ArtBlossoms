@@ -36,18 +36,18 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/ArtBlossoms.git
+   git clone https://github.com/puumeow/ArtBlossoms.git
 
-    Navigate to the project folder:
-
-cd ArtBlossoms
+Navigate to the project folder:
+      ```bash
+      cd ArtBlossoms
 
 (Optional but recommended) Create a virtual environment:
-
-python -m venv venv
+   ```bash
+   python -m venv venv
 
 Activate the virtual environment:
-
+   ```bash
     Windows: venv\Scripts\activate
 
 venv\Scripts\activate
