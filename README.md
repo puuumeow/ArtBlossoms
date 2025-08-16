@@ -1,151 +1,167 @@
 # ArtBlossoms
 
-**ArtBlossoms** is a modern web-based platform for artists and buyers. Artists can showcase and sell their artwork, while buyers can browse, purchase, and request custom art pieces. The platform focuses on ease of use, visual appeal, and a seamless experience for both artists and buyers.
+**ArtBlossoms** is a sleek, web-based platform connecting artists and art enthusiasts. Artists can display and sell their creations, while buyers can browse, purchase, and request custom artworks. The platform emphasizes usability, visual appeal, and seamless interaction for all users.
 
 ---
 
 ## Features
 
-### For Artists
-- Upload and manage artworks with images, descriptions, and categories.
-- Receive notifications when orders are placed.
-- Manage custom artwork requests.
-- Track order status and view buyer messages.
+### Artists
 
-### For Buyers
-- Browse all artworks with search and filtering options.
-- Add artworks to cart and place bulk orders.
-- Track order status.
-- Leave reviews on purchased artworks.
+* Upload and manage artwork with images, descriptions, and categories.
+* Receive instant notifications for new orders.
+* Handle custom artwork requests efficiently.
+* Track order statuses and view buyer messages.
 
-### For Users with Both Roles
-- Full access to artist and buyer functionalities.
-- Dynamic profile page showing relevant sections based on role.
+### Buyers
+
+* Browse and filter artworks by category, artist, or tags.
+* Add items to a cart and place bulk orders.
+* Track order statuses easily.
+* Submit reviews for purchased artworks.
+
+### Users with Both Roles
+
+* Access all features for artists and buyers.
+* Dynamic profile pages displaying role-specific sections.
 
 ---
 
-## Technologies Used
-- **Backend:** Python, Flask  
-- **Database:** MySQL  
-- **Frontend:** HTML, CSS, JavaScript  
-- **Other Tools:** Bootstrap (optional for styling), Jinja2 templating  
+## Technologies
+
+* **Backend:** Python, Flask
+* **Database:** MySQL
+* **Frontend:** HTML, CSS, JavaScript
+* **Additional Tools:** Bootstrap (optional), Jinja2 templating
 
 ---
 
 ## Installation
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/puumeow/ArtBlossoms.git
 
-Navigate to the project folder:
-      ```bash
-      cd ArtBlossoms
+```bash
+git clone https://github.com/yourusername/ArtBlossoms.git
+```
 
-(Optional but recommended) Create a virtual environment:
-   ```bash
-   python -m venv venv
+2. Enter the project directory:
 
-Activate the virtual environment:
-   ```bash
-    Windows: venv\Scripts\activate
+```bash
+cd ArtBlossoms
+```
 
+3. (Optional) Create a virtual environment:
+
+```bash
+python -m venv venv
+```
+
+4. Activate the virtual environment:
+
+* **Windows:**
+
+```bash
 venv\Scripts\activate
+```
 
-Mac/Linux:
+* **Mac/Linux:**
 
-    source venv/bin/activate
+```bash
+source venv/bin/activate
+```
 
-Install required Python packages:
+5. Install required packages:
 
+```bash
 pip install flask mysql-connector-python
+```
 
-    Or, if a requirements.txt file is provided:
+Or with a `requirements.txt`:
 
+```bash
 pip install -r requirements.txt
-  pip install flask mysql-connector-python
+```
 
-    Or, if a requirements.txt file is provided:
+6. Set up the MySQL database:
 
-pip install -r requirements.txt
+* Create a database named `ArtBlossoms`.
+* Import the provided schema or create tables manually.
 
-Set up the MySQL database:
+7. Run the application:
 
-    Create a database named ArtBlossoms.
-
-    Import the provided schema or manually create tables as defined in the project.
-
-Run the Flask application:
-
+```bash
 python app.py
+```
 
-Open your browser and go to:
+8. Open your browser and visit:
 
-    http://127.0.0.1:5000/
+```
+http://127.0.0.1:5000/
+```
 
-Database Schema Overview
+---
 
-    users: Stores user info, roles, and profile details.
+## Database Overview
 
-    artworks: Stores artwork details, images, categories, and prices.
+* **users:** User info, roles, and profiles.
+* **artworks:** Artwork details, categories, and prices.
+* **orders:** Buyer orders, messages, and status tracking.
+* **carts:** Stores items added to carts.
+* **reviews:** Buyer reviews of purchased artwork.
+* **order\_notifications:** Alerts for artists on new orders.
+* **categories, tags, artwork\_tags, districts:** Organize artworks by category, tag, and location.
 
-    orders: Tracks orders, buyer details, messages, and status.
+---
 
-    carts: Stores artworks added to the cart by buyers.
+## Project Structure
 
-    reviews: Buyer reviews for purchased artworks.
-
-    order_notifications: Notifies artists of new orders.
-
-    categories, tags, artwork_tags, districts: Support for categorization, tagging, and location-based details.
-
-Project Structure
-
+```
 ArtBlossoms/
-│
 ├─ app.py
 ├─ db.py
 ├─ requirements.txt
 ├─ routes/
-│   ├─ artwork_route.py
-│   ├─ browse_artworks_route.py
-│   ├─ cart_route.py
-│   ├─ home_route.py
-│   ├─ login_route.py
-│   ├─ logout_route.py
-│   ├─ order_route.py
-│   ├─ profile_route.py
-│   ├─ register_route.py
-│   ├─ review_route.py
-│   └─ upload_artwork_route.py
-│
+│  ├─ artwork_route.py
+│  ├─ browse_artworks_route.py
+│  ├─ cart_route.py
+│  ├─ home_route.py
+│  ├─ login_route.py
+│  ├─ logout_route.py
+│  ├─ order_route.py
+│  ├─ profile_route.py
+│  ├─ register_route.py
+│  ├─ review_route.py
+│  └─ upload_artwork_route.py
 ├─ templates/
-│   ├─ home.html
-│   ├─ login.html
-│   ├─ register.html
-│   ├─ profile.html
-│   ├─ artwork_detail.html
-│   └─ ...
-│
+│  ├─ home.html
+│  ├─ login.html
+│  ├─ register.html
+│  ├─ profile.html
+│  ├─ artwork_detail.html
+│  └─ ...
 └─ static/
-    ├─ images/
-    ├─ css/
-    └─ js/
+   ├─ images/
+   ├─ css/
+   └─ js/
+```
 
-Future Enhancements
+---
 
-    Real-time chat between buyers and artists.
+## Future Enhancements
 
-    Payment gateway integration.
+* Real-time chat between buyers and artists.
+* Payment gateway integration.
+* Artwork auctions and bidding system.
+* Advanced analytics for artists (views, sales, statistics).
 
-    Artwork bidding and auction system.
+---
 
-    Enhanced analytics for artists (views, sales stats, etc.).
-
-License
+## License
 
 This project is licensed under the MIT License.
-Copyright
 
-© 2025 [Laiba Sumaiya Nazim]. All rights reserved.
-Unauthorized copying, reproduction, or distribution of this project, in whole or in part, is prohibited.
+---
+
+## Copyright
+
+© 2025 \[Your Name]. All rights reserved. Unauthorized copying or distribution of this project, in whole or in part, is prohibited.
