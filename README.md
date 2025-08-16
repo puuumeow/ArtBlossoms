@@ -156,12 +156,9 @@ ArtBlossoms/
 
 ---
 
-## License
-
-This project is licensed under the MIT License.
-
----
 
 ## Copyright
 
-© 2025 \[Laiba Sumaiya Nazim]. All rights reserved. Unauthorized copying or distribution of this project, in whole or in part, is prohibited.
+Copyright Notice
+
+© 2025 [Laiba Sumaiya Nazim]. All rights reserved. This project is strictly for educational purposes and may not be copied, reproduced, or redistributed in any form without explicit permission.
