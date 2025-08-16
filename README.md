@@ -48,7 +48,7 @@ python -m venv venv
 
 Activate the virtual environment:
 
-    Windows:
+    Windows: venv\Scripts\activate
 
 venv\Scripts\activate
 
@@ -59,6 +59,11 @@ Mac/Linux:
 Install required Python packages:
 
 pip install flask mysql-connector-python
+
+    Or, if a requirements.txt file is provided:
+
+pip install -r requirements.txt
+  pip install flask mysql-connector-python
 
     Or, if a requirements.txt file is provided:
 
