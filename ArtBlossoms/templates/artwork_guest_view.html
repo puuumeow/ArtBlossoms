@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ artwork.title }} - ArtBlossoms</title>
+  <link rel="icon" href="/static/images/page_image/logo.png" type="image/png" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #001f3f 0%, #004080 100%);
+      color: #e0e7ff;
+      text-align: center;
+      padding: 50px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      text-shadow: 0 0 10px #4db8ffaa;
+      margin-bottom: 20px;
+    }
+
+    .artwork-img {
+      max-width: 90%;
+      max-height: 400px;
+      border-radius: 16px;
+      box-shadow: 0 0 25px #4db8ffcc;
+      object-fit: contain;
+      margin: 0 auto 30px;
+      transition: transform 0.3s ease;
+      cursor: default;
+    }
+    .artwork-img:hover {
+      transform: scale(1.05);
+    }
+
+    p {
+      font-size: 1.25rem;
+      margin: 6px 0;
+      font-weight: 600;
+      text-shadow: 0 0 8px #3399ff66;
+    }
+
+    h3 {
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: #99bbffdd;
+      margin-top: 40px;
+      text-shadow: 0 0 6px #224466aa;
+    }
+
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .buttons a {
+      display: inline-block;
+      padding: 14px 36px;
+      background: linear-gradient(45deg, #4db8ff, #3399ff);
+      color: white;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 0 12px #4db8ffcc;
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
+      user-select: none;
+    }
+
+    .buttons a:hover {
+      background: linear-gradient(45deg, #3399ff, #1a6ecc);
+      box-shadow: 0 0 20px #3399ffcc;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+      }
+      p {
+        font-size: 1rem;
+      }
+      .buttons a {
+        padding: 12px 28px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>{{ artwork.title }}</h1>
+  <img src="/static/uploads/{{ artwork.image }}" alt="{{ artwork.title }}" class="artwork-img" />
+  <p><strong>Category:</strong> {{ artwork.category_name }}</p>
+  <p><strong>Price:</strong> ৳{{ "%.2f"|format(artwork.price) }}</p>
+
+  <h3>Please log in or register to view full details, order, or review this artwork.</h3>
+
+  <div class="buttons">
+    <a href="/login">Log In</a>
+    <a href="/register">Register</a>
+  </div>
+</body>
+</html>

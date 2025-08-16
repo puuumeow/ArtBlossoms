@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - User Reports | ArtBlossoms</title>
+  <link rel="icon" href="/static/images/page_image/logo.png" type="image/png" />
+  <style>
+    body {
+      background: #101530;
+      color: #eee;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px 15px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #4db8ff;
+      text-shadow: 0 0 12px #4db8ffaa;
+      font-weight: 900;
+    }
+
+    .flash-message {
+      max-width: 800px;
+      margin: 0 auto 20px;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .flash-success { background: #28a745; color: white; }
+    .flash-error   { background: #dc3545; color: white; }
+
+    .report-card {
+      background: #1d2a4a;
+      border-radius: 15px;
+      box-shadow: 0 0 18px #4db8ff88;
+      margin: 20px auto;
+      max-width: 800px;
+      padding: 22px 28px;
+      line-height: 1.5;
+    }
+
+    .report-card p {
+      margin: 8px 0;
+      font-size: 1rem;
+    }
+
+    .report-card strong {
+      color: #4db8ff;
+    }
+
+    .actions {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .actions a,
+    .actions button {
+      padding: 10px 18px;
+      font-weight: 700;
+      border-radius: 12px;
+      border: none;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .actions a {
+      background: linear-gradient(45deg, #4db8ff, #3399ff);
+      color: white;
+      box-shadow: 0 0 20px #4db8ffaa;
+    }
+
+    .actions a:hover {
+      background: linear-gradient(45deg, #3399ff, #1a6ecc);
+      box-shadow: 0 0 28px #3399ffee;
+      transform: translateY(-2px);
+    }
+
+    .dismiss-btn {
+      background: linear-gradient(45deg, #ff4d4d, #e60000);
+      color: white;
+      box-shadow: 0 0 20px #ff4d4daa;
+    }
+
+    .dismiss-btn:hover {
+      background: linear-gradient(45deg, #e60000, #b30000);
+      box-shadow: 0 0 28px #ff0000ee;
+    }
+
+    .ban-btn {
+      background: linear-gradient(45deg, #ff9900, #cc6600);
+      color: white;
+      box-shadow: 0 0 20px #ff9900aa;
+    }
+
+    .ban-btn:hover {
+      background: linear-gradient(45deg, #cc6600, #993300);
+      box-shadow: 0 0 20px #ff9900bb;
+    }
+
+    .unban-btn {
+      background: linear-gradient(45deg, #28a745, #1e7e34);
+      color: white;
+      box-shadow: 0 0 20px #28a745aa;
+    }
+
+    .unban-btn:hover {
+      background: linear-gradient(45deg, #1e7e34, #155724);
+      box-shadow: 0 0 28px #218838ee;
+    }
+
+    @media (max-width: 600px) {
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .actions a,
+      .actions button {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>User Reports</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% if reports %}
+    {% for report in reports %}
+      <article class="report-card">
+        <p><strong>Reporter:</strong> {{ report.reporter_username }}</p>
+        <p><strong>Reported User:</strong> {{ report.reported_username }}</p>
+        <p><strong>Reason:</strong> {{ report.reason }}</p>
+        <p><strong>Description:</strong> {{ report.description or "No additional info." }}</p>
+        <p><strong>Reported At:</strong> {{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+
+        <div class="actions">
+          <a href="/profile?username={{ report.reported_username }}" target="_blank">View Profile</a>
+
+          <form method="POST" action="{{ url_for('admin_bp.dismiss_user_report') }}" onsubmit="return confirm('Dismiss this report?');">
+            <input type="hidden" name="report_id" value="{{ report.id }}">
+            <button type="submit" class="dismiss-btn">Dismiss</button>
+          </form>
+
+          {% if report.is_banned %}
+            <form method="POST" action="{{ url_for('admin_bp.unban_user') }}" onsubmit="return confirm('Unban this user?');">
+              <input type="hidden" name="username" value="{{ report.reported_username }}">
+              <button type="submit" class="unban-btn">Unban User</button>
+            </form>
+          {% else %}
+            <form method="POST" action="{{ url_for('admin_bp.ban_user') }}" onsubmit="return confirm('Ban this user?');">
+              <input type="hidden" name="username" value="{{ report.reported_username }}">
+              <button type="submit" class="ban-btn">Ban User</button>
+            </form>
+          {% endif %}
+        </div>
+      </article>
+    {% endfor %}
+  {% else %}
+    <p style="text-align: center; font-size: 1.2rem; margin-top: 40px;">No user reports found.</p>
+  {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Place Order - ArtBlossoms</title>
+  <link rel="icon" href="/static/images/page_image/logo.png" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url("/static/images/page_image/home_bg.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 50px auto;
+      background: rgba(0, 0, 60, 0.85);
+      padding: 40px 50px;
+      border-radius: 16px;
+      box-shadow: 0 0 25px #2a5ecb;
+    }
+
+    h1 {
+      text-align: center;
+      color: #4db8ff;
+      margin-bottom: 35px;
+      text-shadow: 0 0 8px #4db8ffaa;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .form-group {
+      flex: 1 1 100%;
+    }
+
+    .form-group.half {
+      flex: 1 1 48%;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #cce6ff;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255,255,255,0.15);
+      color: rgb(207, 198, 244);
+      font-size: 1rem;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .cart-summary {
+      width: 100% ;
+      padding: 25px 30px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      box-sizing: border-box;
+    }
+
+    .cart-item {
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #4db8ff44;
+    }
+
+    .cart-item strong {
+      color: #aad8ff;
+    }
+
+    .total {
+      margin-top: 20px;
+      font-weight: 700;
+      text-align: right;
+      color: #aad8ff;
+    }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 30px;
+      background: #4db8ff;
+      padding: 16px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      color: #001f3f;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background: #3399ff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Place Your Order</h1>
+
+    <form method="POST">
+      <div class="form-group">
+        <label for="buyer_name">Full Name *</label>
+        <input type="text" name="buyer_name" required>
+      </div>
+
+      <div class="form-group half">
+        <label for="mobile">Mobile Number *</label>
+        <input type="text" name="mobile" required>
+      </div>
+
+      <div class="form-group half">
+        <label for="email">Email Address *</label>
+        <input type="email" name="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Shipping Address *</label>
+        <textarea name="address" required></textarea>
+      </div>
+
+      <div class="form-group half">
+        <label for="district_id">District *</label>
+        <select name="district_id" required>
+          <option value="">-- Select District --</option>
+          {% for district in districts %}
+            <option value="{{ district.id }}">{{ district.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group half">
+        <label for="postcode">Postcode</label>
+        <input type="text" name="postcode">
+      </div>
+
+      <div class="form-group">
+        <label for="message">Message to Artist (optional)</label>
+        <textarea name="message" rows="3"></textarea>
+      </div>
+
+      <div class="cart-summary">
+        <h3>Cart Summary</h3>
+        {% for item in cart_items %}
+          <div class="cart-item">
+            <strong>{{ item.title }}</strong> – ৳{{ "%.2f"|format(item.price) }}<br>
+            Artist: {{ item.first_name }} {{ item.last_name }}
+          </div>
+        {% endfor %}
+        <div class="total">
+          Subtotal: ৳{{ "%.2f"|format(total_price) }}<br>
+          Delivery Charge: ৳{{ "%.2f"|format(delivery_charge) }}<br>
+          <strong>Total: ৳{{ "%.2f"|format(grand_total) }}</strong>
+        </div>
+      </div>
+
+      <button class="submit-btn" type="submit">Confirm Order</button>
+    </form>
+  </div>
+
+</body>
+</html>

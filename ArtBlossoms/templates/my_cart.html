@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Cart - ArtBlossoms</title>
+  <link rel="icon" href="/static/images/page_image/logo.png" type="image/png" />
+  <style>
+    :root {
+      --primary: #4db8ff;
+      --primary-dark: #3399ff;
+      --bg-dark: rgba(10, 10, 40, 0.9);
+      --text: #ffffff;
+      --text-muted: #aad8ff;
+      --danger: #ef5350;
+      --input-bg: #f9f9f9;
+      --shadow-color: rgba(0, 0, 0, 0.6);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url("/static/images/page_image/home_bg.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,20,0.7);
+      z-index: -1;
+    }
+
+    header {
+      background: rgba(0, 0, 80, 0.9);
+      padding: 18px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px var(--shadow-color);
+    }
+
+    header img.logo {
+      height: 45px;
+      cursor: pointer;
+      filter: drop-shadow(0 0 2px var(--primary));
+    }
+
+    header nav a {
+      color: #cce6ff;
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: 24px;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+    }
+
+    header nav a:hover {
+      color: var(--primary);
+    }
+
+    main {
+      max-width: 900px;
+      margin: 50px auto 60px;
+      background: var(--bg-dark);
+      border-radius: 16px;
+      padding: 40px 50px;
+      box-shadow: 0 0 25px var(--primary);
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-weight: 900;
+      font-size: 2rem;
+      color: var(--primary);
+      text-shadow: 0 0 8px var(--primary);
+    }
+
+    .empty-message {
+      font-size: 1.2rem;
+      color: #bbb;
+      text-align: center;
+    }
+
+    .empty-message a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .empty-message a:hover {
+      text-decoration: underline;
+    }
+
+    .artist-section {
+      margin-bottom: 40px;
+      background: rgba(20,20,50,0.85);
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .artist-name {
+      color: var(--primary);
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 6px;
+    }
+
+    .artwork-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      background: rgba(255,255,255,0.05);
+      padding: 10px;
+      border-radius: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .artwork-item:hover {
+      background: rgba(77,184,255,0.1);
+    }
+
+    .artwork-item img {
+      width: 100px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 15px;
+      cursor: pointer;
+      border: 2px solid var(--primary);
+      transition: transform 0.2s ease;
+    }
+
+    .artwork-item img:hover {
+      transform: scale(1.05);
+    }
+
+    .artwork-info h3 {
+      margin: 0;
+      color: var(--text-muted);
+    }
+
+    .artwork-info p {
+      margin: 3px 0 0 0;
+      color: #ddd;
+      font-weight: 600;
+    }
+
+    .artist-summary {
+      margin-top: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+
+    hr.divider {
+      border-color: #4db8ff55;
+      margin: 30px 0;
+    }
+
+    .grand-total {
+      text-align: right;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--primary);
+      text-shadow: 0 0 8px var(--primary);
+      margin-bottom: 30px;
+    }
+
+    .place-order-btn {
+      background: var(--primary);
+      border: none;
+      color: #001f3f;
+      padding: 15px 45px;
+      font-weight: 900;
+      font-size: 1.2rem;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 0 24px rgba(77,184,255,0.8);
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+      display: block;
+      margin-left: auto;
+    }
+
+    .place-order-btn:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 0 36px rgba(51,153,255,0.8);
+      transform: translateY(-2px);
+    }
+
+    .flash-messages {
+      background: rgba(77,184,255,0.8);
+      border-radius: 8px;
+      padding: 12px 20px;
+      margin-bottom: 30px;
+      font-weight: 700;
+      text-align: center;
+      color: white;
+      box-shadow: 0 0 15px rgba(77,184,255,0.6);
+    }
+
+    .delete-btn {
+      background: var(--danger);
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.3s ease, transform 0.2s ease;
+      margin-left: auto;
+    }
+
+    .delete-btn:hover {
+      background: #e60000;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="/static/images/page_image/logo.png" alt="ArtBlossoms Logo" class="logo" />
+    <nav>
+      <a href="/profile">Profile</a>
+      <a href="/browse_artworks">Browse Artworks</a>
+      <a href="/logout">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for message in messages %}
+            <p>{{ message|safe }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <h1>My Cart</h1>
+
+    {% if not artists %}
+      <p class="empty-message">
+        You have not added any artworks in the cart.
+        <a href="{{ url_for('browse_bp.browse_artworks') }}">Browse Artworks</a> to add.
+      </p>
+    {% else %}
+      <form method="POST" id="cart-form">
+        {% for artist, data in artists.items() %}
+          <section class="artist-section">
+            <div class="artist-name">Artist: {{ artist }}</div>
+            <div>
+              {% for art in data.artworks %}
+                <div class="artwork-item">
+                  <img src="/static/uploads/{{ art.image }}" alt="{{ art.title }}" onclick="window.location.href='/artwork/{{ art.id }}'" />
+                  <div class="artwork-info">
+                    <h3>{{ art.title }}</h3>
+                    <p>Price: ৳{{ "%.2f"|format(art.price) }}</p>
+                  </div>
+                  <button class="delete-btn" type="submit" formaction="/cart/delete/{{ art.id }}" formmethod="POST" onclick="return confirm('Remove this artwork from your cart?');">
+                    Delete
+                  </button>
+                </div>
+              {% endfor %}
+            </div>
+            <div class="artist-summary">
+              Subtotal: ৳{{ "%.2f"|format(data.subtotal) }}<br>
+              Delivery Charge: ৳{{ data.delivery }}<br>
+              <strong>Total for {{ artist }}: ৳{{ "%.2f"|format(data.total) }}</strong>
+            </div>
+          </section>
+        {% endfor %}
+
+        <hr class="divider" />
+
+        <div class="grand-total">
+          Grand Total: ৳{{ "%.2f"|format(grand_total) }}
+        </div>
+
+        <button class="place-order-btn" type="submit" formaction="{{ url_for('cart_route.place_cart_order') }}" formmethod="POST">
+          Place Order
+        </button>
+      </form>
+    {% endif %}
+  </main>
+</body>
+</html>

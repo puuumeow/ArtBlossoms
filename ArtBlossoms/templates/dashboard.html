@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - ArtBlossoms</title>
+  <link rel="icon" href="/static/images/page_image/logo.png" type="image/png">
+  <style>
+    :root {
+      --primary: #90caf9;
+      --primary-dark: #42a5f5;
+      --accent: #fdd835;
+      --bg-dark: rgba(15, 20, 45, 0.95);
+      --text: #e3f2fd;
+      --text-muted: #b3e5fcaa;
+      --danger: #ef5350;
+      --success: #4caf50;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: url("/static/images/page_image/home_bg.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 15, 35, 0.85);
+      z-index: -1;
+    }
+
+    header {
+      background: rgba(10, 15, 40, 0.85);
+      padding: 18px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    }
+
+    header img.logo {
+      height: 45px;
+      cursor: pointer;
+    }
+
+    header nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-left: 28px;
+      font-weight: bold;
+    }
+
+    header nav a:hover {
+      color: var(--primary);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 60px auto;
+      background: var(--bg-dark);
+      border-radius: 20px;
+      padding: 40px 50px;
+      box-shadow: 0 0 40px var(--primary-dark);
+    }
+
+    h1, h2 {
+      margin: 0 0 20px;
+    }
+
+    .stats-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 40px;
+      justify-content: center;
+    }
+
+    .card {
+      flex: 1 1 200px;
+      background: #1b2a47;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+      text-align: center;
+      min-width: 180px;
+    }
+
+    .card h3 {
+      margin: 0 0 12px;
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+
+    .card p {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .charts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      margin-bottom: 40px;
+      justify-content: center;
+    }
+
+    canvas {
+      background: #1b2a47;
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 300px;
+    }
+
+    .table-section {
+      margin-top: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1b2a47;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--primary);
+      color: #001f3f;
+    }
+
+    tr:nth-child(even) {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .btn-dashboard {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    @media(max-width: 900px) {
+      .stats-cards, .charts {
+        flex-direction: column;
+        align-items: center;
+      }
+      canvas {
+        width: 100% !important;
+        max-width: 300px;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <img src="/static/images/page_image/logo.png" alt="Logo" onclick="location.href='/'">
+    <nav>
+      <a href="/profile">Profile</a>
+      <a href="/browse_artworks">Browse Artworks</a>
+      <a href="/logout">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Dashboard</h1>
+
+    <!-- Quick Stats Cards -->
+    <div class="stats-cards">
+      <div class="card">
+        <h3>Total Artworks</h3>
+        <p>{{ stats.total_artworks }}</p>
+      </div>
+      <div class="card">
+        <h3>Sold Out</h3>
+        <p>{{ stats.sold_out }}</p>
+      </div>
+      <div class="card">
+        <h3>Available</h3>
+        <p>{{ stats.available }}</p>
+      </div>
+      <div class="card">
+        <h3>Total Revenue</h3>
+        <p>৳{{ stats.total_revenue }}</p>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts">
+      <canvas id="orderStatusChart" width="250" height="250"></canvas>
+      <canvas id="categoryChart" width="250" height="250"></canvas>
+      <canvas id="monthlyRevenueChart" width="250" height="250"></canvas>
+    </div>
+
+    <!-- Top Selling Artworks -->
+    <div class="table-section">
+      <h2>Top Selling Artworks</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Artwork</th>
+            <th>Artist</th>
+            <th>Sold Quantity</th>
+            <th>Total Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for art in top_selling %}
+            <tr>
+              <td>{{ art.title }}</td>
+              <td>{{ art.artist_first }} {{ art.artist_last }}</td>
+              <td>{{ art.sold_count }}</td>
+              <td>৳{{ art.total_earned }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Most Popular Artists -->
+    <div class="table-section">
+      <h2>Most Popular Artists</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Artist</th>
+            <th>Total Artworks Sold</th>
+            <th>Total Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for artist in popular_artists %}
+            <tr>
+              <td>{{ artist.first_name }} {{ artist.last_name }}</td>
+              <td>{{ artist.total_sold }}</td>
+              <td>৳{{ artist.total_revenue }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="table-section">
+      <h2>Recent Orders</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Artwork</th>
+            <th>Status</th>
+            <th>Buyer</th>
+            <th>Ordered On</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in recent_orders %}
+            <tr>
+              <td>{{ order.artwork_title }}</td>
+              <td>{{ order.status }}</td>
+              <td>{{ order.buyer_name }}</td>
+              <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="stats-cards" style="margin-top:40px;">
+      <button class="btn-dashboard" onclick="location.href='/upload_artworks'">Upload Artwork</button>
+      <button class="btn-dashboard" onclick="location.href='/my_cart'">View Cart</button>
+      <button class="btn-dashboard" onclick="location.href='/browse_artworks'">Browse Artworks</button>
+      <button class="btn-dashboard" onclick="location.href='/profile'">Profile</button>
+    </div>
+  </main>
+
+  <script>
+    // Order Status Doughnut Chart
+    const ctx1 = document.getElementById('orderStatusChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pending', 'Processing', 'Sent to Delivery', 'Rejected', 'Sold Out'],
+        datasets: [{
+          data: [
+            {{ stats.pending }},
+            {{ stats.processing }},
+            {{ stats.sent }},
+            {{ stats.rejected }},
+            {{ stats.sold_out }}
+          ],
+          backgroundColor: ['#fdd835','#42a5f5','#4caf50','#ef5350','#9e9e9e']
+        }]
+      },
+      options: { plugins:{ legend:{ position:'bottom' } }, responsive:true, maintainAspectRatio:false }
+    });
+
+    // Category Bar Chart
+    const ctx2 = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: [{% for cat in categories %}'{{ cat.name }}',{% endfor %}],
+        datasets: [{ label:'Artworks per Category', data:[{% for cat in categories %}{{ cat.count }},{% endfor %}], backgroundColor:'var(--primary)' }]
+      },
+      options:{ plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } }, responsive:true, maintainAspectRatio:false }
+    });
+
+    // Monthly Revenue Line Chart
+    const ctx3 = document.getElementById('monthlyRevenueChart').getContext('2d');
+    new Chart(ctx3, {
+      type: 'line',
+      data: {
+        labels: [{% for month in monthly_revenue %}'{{ month.name }}',{% endfor %}],
+        datasets: [{
+          label: 'Revenue per Month',
+          data: [{% for month in monthly_revenue %}{{ month.total }},{% endfor %}],
+          borderColor: 'var(--accent)',
+          backgroundColor: 'rgba(253,216,53,0.3)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options:{ plugins:{ legend:{ position:'bottom' } }, responsive:true, maintainAspectRatio:false }
+    });
+  </script>
+</body>
+</html>

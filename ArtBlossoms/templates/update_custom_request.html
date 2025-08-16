@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <title>Request Custom Artwork - ArtBlossoms</title>
+  <link rel="icon" href="/static/images/page_image/logo.png" type="image/png" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0 20px;
+      min-height: 100vh;
+      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('{{ url_for("static", filename="images/page_image/browse_bg.jpg") }}') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+      color: #e3eaf7;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 60px;
+      user-select: none;
+      overflow-x: hidden;
+    }
+    /* Overlay for readability */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(4, 11, 32, 0.85), rgba(8, 19, 60, 0.85));
+      z-index: -1;
+      backdrop-filter: blur(8px);
+    }
+    form {
+      background: rgba(22, 34, 70, 0.85);
+      max-width: 620px;
+      width: 100%;
+      padding: 48px 56px;
+      border-radius: 24px;
+      box-shadow:
+        0 8px 30px rgba(77, 184, 255, 0.3),
+        inset 0 0 25px rgba(77, 184, 255, 0.2);
+      backdrop-filter: blur(12px);
+      transition: box-shadow 0.3s ease;
+      user-select: text;
+    }
+    form:hover {
+      box-shadow:
+        0 12px 40px rgba(77, 184, 255, 0.55),
+        inset 0 0 35px rgba(77, 184, 255, 0.4);
+    }
+    h1 {
+      font-weight: 800;
+      font-size: 2.8rem;
+      color: #4db8ff;
+      margin-bottom: 40px;
+      text-align: center;
+      letter-spacing: 1.1px;
+      text-shadow: 0 0 18px #4db8ffcc;
+      user-select: text;
+    }
+    .artist-info {
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: #a9d1ffcc;
+      text-align: center;
+      margin-bottom: 36px;
+      letter-spacing: 0.04em;
+      user-select: text;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 10px;
+      color: #bbd7ffcc;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      user-select: text;
+    }
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      padding: 20px 24px;
+      font-size: 1.1rem;
+      font-family: 'Poppins', sans-serif;
+      border-radius: 18px;
+      border: none;
+      background: #18407b;
+      color: #dde9ff;
+      box-shadow: inset 0 0 20px #4db8ffbb;
+      resize: vertical;
+      line-height: 1.5;
+      transition: background-color 0.25s ease, box-shadow 0.25s ease;
+      user-select: text;
+    }
+    textarea::placeholder {
+      color: #8abaffcc;
+      font-style: italic;
+    }
+    textarea:focus {
+      outline: none;
+      background: #0f2e94;
+      box-shadow: inset 0 0 28px #3399ffcc;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      background: linear-gradient(90deg, #4db8ff 0%, #3399ff 100%);
+      color: #001f3f;
+      font-weight: 800;
+      font-size: 1.25rem;
+      padding: 18px 0;
+      border: none;
+      border-radius: 24px;
+      cursor: pointer;
+      box-shadow:
+        0 8px 28px #3a8fffcc;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      user-select: none;
+      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #2a83ff 0%, #1a65db 100%);
+      transform: translateY(-2px);
+      box-shadow:
+        0 12px 38px #1f5cd3cc;
+    }
+    button:active {
+      transform: translateY(0);
+      box-shadow:
+        0 6px 15px #3a8fffaa;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 30px;
+      text-align: center;
+      width: 100%;
+      color: #4db8ff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      user-select: text;
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+    .back-link:hover {
+      color: #1a65db;
+      text-decoration: underline;
+    }
+    .flash-message {
+      background: #e63946cc;
+      border-radius: 12px;
+      padding: 14px 24px;
+      margin-bottom: 28px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-align: center;
+      letter-spacing: 0.05em;
+      box-shadow: 0 0 15px #e63946aa;
+      user-select: none;
+      animation: pulse-red 2s infinite alternate;
+    }
+    @keyframes pulse-red {
+      0% {
+        box-shadow: 0 0 15px #e63946aa;
+      }
+      100% {
+        box-shadow: 0 0 30px #ff4b5cdd;
+      }
+    }
+    @media (max-width: 640px) {
+      form {
+        padding: 32px 24px;
+        border-radius: 20px;
+      }
+      h1 {
+        font-size: 2.2rem;
+      }
+      textarea {
+        min-height: 140px;
+        font-size: 1rem;
+      }
+      button {
+        font-size: 1.15rem;
+      }
+      .artist-info {
+        font-size: 1.1rem;
+      }
+      .back-link {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <form method="POST" action="">
+    <h1>Request Custom Artwork</h1>
+
+    <div class="artist-info" aria-label="Artist name">
+      To: {{ artist.first_name }} {{ artist.last_name }}
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="flash-message" role="alert">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <label for="description">Describe what you want:</label>
+    <textarea
+      name="description"
+      id="description"
+      placeholder="Provide detailed description, style, size, deadline, etc."
+      required
+      aria-describedby="descHelp"
+    >{{ description or '' }}</textarea>
+
+    <button type="submit" aria-label="Send Custom Artwork Request">Send Request</button>
+
+    <a href="{{ url_for('profile_bp.profile', username=artist.username) }}" class="back-link" aria-label="Back to Profile">&larr; Back to Profile</a>
+  </form>
+</body>
+</html>

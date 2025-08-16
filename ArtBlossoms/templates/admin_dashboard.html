@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard - ArtBlossoms</title>
+    <link rel="icon" href="/static/images/page_image/logo.png" type="image/png" />
+    <style>
+        body {
+            background: #101530;
+            color: #eee;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+            min-height: 100vh;
+        }
+        h1 {
+            color: #4db8ff;
+            margin-bottom: 40px;
+            text-shadow: 0 0 12px #4db8ffaa;
+        }
+        .dashboard-options {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .option-card {
+            background: #1d2a4a;
+            border-radius: 15px;
+            padding: 40px 60px;
+            box-shadow: 0 0 18px #4db8ff88;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1.5rem;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            user-select: none;
+            text-decoration: none;
+        }
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 28px #3399ffee;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <div class="dashboard-options">
+        <a href="{{ url_for('admin_bp.view_user_reports') }}" class="option-card">User Reports</a>
+        <a href="{{ url_for('admin_bp.view_artwork_reports') }}" class="option-card">Artwork Reports</a>
+    </div>
+</body>
+</html>

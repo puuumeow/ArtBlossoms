@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - Artwork Reports - ArtBlossoms</title>
+  <link rel="icon" href="/static/images/page_image/logo.png" type="image/png" />
+  <style>
+    body {
+      background: #101530;
+      color: #eee;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 30px 15px;
+      min-height: 100vh;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #4db8ff;
+      font-weight: 900;
+      text-shadow: 0 0 12px #4db8ffaa;
+    }
+    .report-card {
+      background: #1d2a4a;
+      border-radius: 15px;
+      box-shadow: 0 0 18px #4db8ff88;
+      margin: 20px auto;
+      max-width: 900px;
+      padding: 22px 28px;
+      line-height: 1.5;
+    }
+    .report-card p {
+      margin: 8px 0;
+      font-size: 1rem;
+    }
+    .report-card strong {
+      color: #4db8ff;
+    }
+    .actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .actions a,
+    .actions button {
+      padding: 10px 20px;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      color: white;
+      font-size: 0.95rem;
+      user-select: none;
+      transition: background 0.3s ease;
+    }
+    .actions a {
+      background: linear-gradient(45deg, #4db8ff, #3399ff);
+      box-shadow: 0 0 20px #4db8ffaa;
+    }
+    .actions a:hover {
+      background: linear-gradient(45deg, #3399ff, #1a6ecc);
+      box-shadow: 0 0 28px #3399ffee;
+      transform: translateY(-2.5px);
+    }
+    .actions .ban-btn {
+      background: linear-gradient(45deg, #ff4d4d, #e60000);
+      box-shadow: 0 0 20px #ff4d4daa;
+    }
+    .actions .ban-btn:hover {
+      background: linear-gradient(45deg, #e60000, #b30000);
+      box-shadow: 0 0 28px #ff0000ee;
+      transform: translateY(-2.5px);
+    }
+    .actions .unban-btn {
+      background: linear-gradient(45deg, #28a745, #1e7e34);
+      box-shadow: 0 0 20px #28a745aa;
+    }
+    .actions .unban-btn:hover {
+      background: linear-gradient(45deg, #1e7e34, #155d27);
+      box-shadow: 0 0 28px #28a745dd;
+      transform: translateY(-2.5px);
+    }
+    @media (max-width: 600px) {
+      .actions {
+        flex-direction: column;
+      }
+      .actions a, .actions button {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Artwork Reports</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div>
+        {% for category, message in messages %}
+          <div class="flash-message flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% if reports %}
+    {% for report in reports %}
+      <div class="report-card">
+        <p><strong>Reporter:</strong> {{ report.reporter_username }}</p>
+        <p><strong>Artwork:</strong>
+          <a href="{{ url_for('artwork_bp.artwork_detail', artwork_id=report.artwork_id) }}" target="_blank">
+            {{ report.artwork_title }}
+          </a>
+        </p>
+        <p><strong>Artist:</strong> {{ report.artist_username }}</p>
+        <p><strong>Reason:</strong> {{ report.reason }}</p>
+        <p><strong>Description:</strong> {{ report.description or "No additional info." }}</p>
+        <p><strong>Reported At:</strong> {{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+
+        <div class="actions">
+          <!-- View Artwork -->
+          <a href="{{ url_for('artwork_bp.artwork_detail', artwork_id=report.artwork_id) }}" target="_blank">
+            View Artwork
+          </a>
+
+          <!-- Dismiss Report -->
+          <form method="POST" action="{{ url_for('admin_bp.dismiss_artwork_report') }}"
+                onsubmit="return confirm('Dismiss this report?');" style="margin: 0;">
+            <input type="hidden" name="report_id" value="{{ report.id }}">
+            <button type="submit"
+              style="background:linear-gradient(45deg, #ff9900, #cc6600); box-shadow: 0 0 20px #ff9900aa;">
+              Dismiss
+            </button>
+          </form>
+
+          <!-- Ban/Unban Toggle -->
+          {% if report.is_banned %}
+            <form method="POST" action="{{ url_for('admin_bp.unban_artist') }}"
+                  onsubmit="return confirm('Unban this artist?');" style="margin: 0;">
+              <input type="hidden" name="artist_username" value="{{ report.artist_username }}">
+              <button type="submit"
+                style="background:linear-gradient(45deg, #00cc66, #00994d); box-shadow: 0 0 20px #00cc66aa;">
+                Unban Artist
+              </button>
+            </form>
+          {% else %}
+            <form method="POST" action="{{ url_for('admin_bp.ban_artist') }}"
+                  onsubmit="return confirm('Ban this artist?');" style="margin: 0;">
+              <input type="hidden" name="artist_username" value="{{ report.artist_username }}">
+              <button type="submit"
+                style="background:linear-gradient(45deg, #ff0000, #cc0000); box-shadow: 0 0 20px #ff0000aa;">
+                Ban Artist
+              </button>
+            </form>
+          {% endif %}
+
+          <!-- Delete Artwork -->
+          <form method="POST" action="{{ url_for('admin_bp.delete_artwork') }}"
+                onsubmit="return confirm('Delete this artwork permanently?');" style="margin: 0;">
+            <input type="hidden" name="artwork_id" value="{{ report.artwork_id }}">
+            <button type="submit"
+              style="background:linear-gradient(45deg, #9900cc, #660099); box-shadow: 0 0 20px #9900ccaa;">
+              Delete Artwork
+            </button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p style="text-align:center; font-size:1.2rem; margin-top: 40px;">No artwork reports found.</p>
+  {% endif %}
+</body>
+
+</html>

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ artwork.title }} - Artwork Detail | ArtBlossoms</title>
+  <link rel="icon" href="/static/images/page_image/logo.png" type="image/png" />
+  <style>
+    :root {
+      --accent: #4db8ff;
+      --accent-dark: #3399ff;
+      --bg-dark: rgba(12, 18, 36, 0.96);
+      --modal-bg: rgba(0, 0, 0, 0.7);
+      --card-bg: rgba(20, 28, 48, 0.95);
+      --border-radius: 16px;
+      --glass-blur: blur(8px);
+    }
+
+    /* Reset & base styles */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url("/static/images/page_image/browse_bg.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: #f0f4ff;
+      line-height: 1.6;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    header {
+      background: rgba(0, 0, 50, 0.85);
+      backdrop-filter: var(--glass-blur);
+      padding: 18px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header img.logo {
+      height: 42px;
+      filter: drop-shadow(0 0 2px var(--accent));
+    }
+
+    header nav a {
+      color: #cceeff;
+      margin-left: 20px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    header nav a:hover {
+      color: var(--accent);
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 60px auto 100px;
+      background: var(--bg-dark);
+      border-radius: var(--border-radius);
+      padding: 40px 50px;
+      box-shadow: 0 0 20px #1e3a8a;
+      position: relative;
+      z-index: 1;
+    }
+
+    .artwork-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: center;
+    }
+
+    .artwork-img {
+      flex: 1;
+      max-width: 350px;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: 0 0 16px var(--accent);
+    }
+
+    .artwork-img img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      display: block;
+    }
+
+    .artwork-details {
+      flex: 2;
+    }
+
+    .artwork-details h1 {
+      font-size: 2.4rem;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sold-out-badge {
+      display: inline-block;
+      background: #ff4444;
+      color: #fff;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      box-shadow: 0 0 12px #ff4444cc;
+      user-select: none;
+    }
+
+    .category, .price, .description {
+      margin-bottom: 14px;
+    }
+
+    .category {
+      color: #a9c6ff;
+    }
+
+    .price {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #50d1ff;
+    }
+
+    .description {
+      color: #ccd;
+    }
+
+    .tags .tag {
+      display: inline-block;
+      background: #4db8ff22;
+      color: #cce6ff;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin: 5px 8px 5px 0;
+      font-size: 0.85rem;
+    }
+
+    .artist-info {
+      margin-top: 12px;
+    }
+
+    .artist-info a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .artist-info a:hover {
+      color: #80c8ff;
+    }
+
+    #add-to-cart-btn {
+      background: linear-gradient(45deg, var(--accent), var(--accent-dark));
+      border: none;
+      color: #001f3f;
+      font-weight: bold;
+      padding: 12px 24px;
+      border-radius: 12px;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 12px var(--accent);
+    }
+
+    #add-to-cart-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px var(--accent);
+    }
+
+    #add-to-cart-btn:disabled {
+      background: #777 !important;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* === REPORT BUTTON === */
+    #report-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #ff5555, #cc2222);
+      color: white;
+      font-weight: 700;
+      padding: 12px 22px;
+      font-size: 1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 15px #ff4444cc;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+      margin-top: 20px;
+    }
+
+    #report-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px #ff5555dd;
+    }
+
+    #report-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    /* === REPORT MODAL === */
+    #modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--modal-bg);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+      backdrop-filter: blur(5px);
+    }
+
+    #reportForm {
+      background: var(--card-bg);
+      padding: 30px 28px 28px 28px;
+      border-radius: 18px;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 0 25px var(--accent);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    #reportForm label {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    #reportForm select,
+    #reportForm textarea {
+      background: #12203f;
+      border: none;
+      color: #eee;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: box-shadow 0.3s ease;
+      box-shadow: inset 0 0 5px #1a2a5a;
+    }
+
+    #reportForm select:focus,
+    #reportForm textarea:focus {
+      outline: none;
+      box-shadow: inset 0 0 8px var(--accent);
+      background: #1a2a5a;
+    }
+
+    #reportForm button {
+      padding: 12px 0;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-radius: 14px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    #submit-report-btn {
+      background: linear-gradient(45deg, #4db8ff, #3399ff);
+      color: #001f3f;
+      margin-bottom: 10px;
+    }
+
+    #submit-report-btn:hover {
+      background: linear-gradient(45deg, #3399ff, #1a6ecc);
+      box-shadow: 0 0 18px var(--accent);
+      transform: scale(1.05);
+    }
+
+    #cancel-report-btn {
+      background: #444;
+      color: #eee;
+    }
+
+    #cancel-report-btn:hover {
+      background: #666;
+      transform: scale(1.05);
+    }
+
+    /* Close button (X) top right */
+    #close-report-btn {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 700;
+      transition: color 0.25s ease;
+    }
+
+    #close-report-btn:hover {
+      color: #80c8ff;
+    }
+
+    /* Reviews and other styles unchanged from previous version */
+
+    .reviews {
+      margin-top: 60px;
+    }
+
+    .reviews h2 {
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .review-card {
+      background: var(--card-bg);
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 8px #4db8ff44;
+    }
+
+    .review-author {
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .review-rating {
+      margin: 5px 0;
+    }
+
+    .review-rating span {
+      font-size: 1.1rem;
+      transition: color 0.2s ease;
+    }
+
+    .review-date {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    .review-comment {
+      margin-top: 10px;
+      white-space: pre-wrap;
+    }
+
+    #review-form {
+      margin-top: 30px;
+      padding: 20px;
+      background: #0e182f;
+      border-radius: 12px;
+    }
+
+    #review-form h3 {
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    #review-form label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+
+    #review-form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      background: #1a2a4a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      resize: vertical;
+      min-height: 80px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    #review-form button {
+      background: var(--accent);
+      color: #003f5f;
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.25s ease;
+    }
+
+    #review-form button:hover {
+      background: #3399ff;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px var(--accent);
+    }
+
+    #review-form .star {
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #555;
+      user-select: none;
+      transition: color 0.2s ease;
+      margin-right: 4px;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 30px 20px;
+      }
+
+      .artwork-top {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .artwork-img {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="/static/images/page_image/logo.png" class="logo" alt="ArtBlossoms Logo" />
+    <nav>
+      <a href="/browse_artworks">Browse Artworks</a>
+      {% if session.username %}
+        <a href="/profile">My Profile</a>
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main>
+    <div class="artwork-top">
+      <div class="artwork-img">
+        <img src="/static/uploads/{{ artwork.image }}" alt="{{ artwork.title }}" />
+      </div>
+
+      <div class="artwork-details">
+        <h1>
+          {{ artwork.title }}
+          {% if artwork.sold_out %}
+            <span class="sold-out-badge">SOLD OUT</span>
+          {% endif %}
+        </h1>
+
+        <div class="category"><strong>Category:</strong> {{ artwork.category_name }}</div>
+        <div class="price"><strong>Price:</strong> ৳{{ "%.2f"|format(artwork.price) }}</div>
+        <p class="description">{{ artwork.description }}</p>
+
+        <div class="tags">
+          {% if tags %}
+            {% for tag in tags %}
+              <span class="tag">{{ tag }}</span>
+            {% endfor %}
+          {% else %}
+            <span class="tag">No tags</span>
+          {% endif %}
+        </div>
+
+        <div class="artist-info">
+          <strong>Artist:</strong>
+          <a href="/profile?username={{ artwork.username }}">{{ artwork.first_name }} {{ artwork.last_name }}</a>
+        </div>
+
+        {% if session.username %}
+          {% if user.username != artwork.username %}
+            {% if artwork.sold_out %}
+              <button id="add-to-cart-btn" disabled>Sold Out</button>
+            {% else %}
+              <form method="get" action="{{ url_for('cart_route.add_to_cart', artwork_id=artwork.id) }}">
+                <button id="add-to-cart-btn" type="submit">Add to Cart</button>
+              </form>
+            {% endif %}
+          {% else %}
+            <p style="color:#aaa; margin-top: 15px;">You can't add your own artwork to the cart.</p>
+          {% endif %}
+        {% endif %}
+
+        {% if session.username and user.username != artwork.username %}
+          <button id="report-btn" aria-haspopup="dialog" aria-controls="modal-overlay" aria-expanded="false" title="Report this artwork">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2C6.48 2 2 6.48 2 12c0 3.87 2.37 7.18 5.72 8.56L8 20v-6H6v-2h2V8c0-1.1.9-2 2-2h2v2h-2v2h2v6l.28-.14C19.63 19.18 22 15.87 22 12c0-5.52-4.48-10-10-10z"/>
+            </svg>
+            Report this Artwork
+          </button>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
+      <form id="reportForm" action="{{ url_for('report_bp.report_artwork', artwork_id=artwork.id) }}" method="POST" novalidate>
+        <button type="button" id="close-report-btn" aria-label="Close Report Form">&times;</button>
+        <h2 id="modal-title" style="color: var(--accent); margin-bottom: 12px;">Report Artwork</h2>
+
+        <label for="reason">Reason</label>
+        <select name="reason" id="reason" required>
+          <option value="" disabled selected>Select a reason</option>
+          <option value="Inappropriate Content">Inappropriate Content</option>
+          <option value="Copyright Violation">Copyright Violation</option>
+          <option value="Spam or Scam">Spam or Scam</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <label for="description">Description (optional)</label>
+        <textarea name="description" id="description" rows="4" placeholder="Write more details here..."></textarea>
+
+        <button type="submit" id="submit-report-btn">Submit Report</button>
+        <button type="button" id="cancel-report-btn">Cancel</button>
+      </form>
+    </div>
+
+    <!-- Reviews and Review Form -->
+    <section class="reviews">
+      <h2>Reviews ({{ reviews | length }})</h2>
+
+      {% if reviews %}
+        {% for review in reviews %}
+          <div class="review-card">
+            <div class="review-author">{{ review.first_name }} {{ review.last_name }}</div>
+            <div class="review-rating">
+              {% for i in range(review.rating) %}
+                <span style="color: #ffd700;">★</span>
+              {% endfor %}
+              {% for i in range(5 - review.rating) %}
+                <span style="color: #555;">☆</span>
+              {% endfor %}
+              ({{ review.rating }}/5)
+            </div>
+            <div class="review-date">{{ review.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+            <div class="review-comment">{{ review.comment }}</div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>No reviews yet.</p>
+      {% endif %}
+
+      {% if session.username and can_review %}
+        <form id="review-form" method="POST" action="{{ url_for('review_bp.review_artwork', artwork_id=artwork.id) }}">
+          <h3>Leave a Review</h3>
+
+          <label for="rating">Rating</label>
+          <div>
+            <span class="star">★</span>
+            <span class="star">★</span>
+            <span class="star">★</span>
+            <span class="star">★</span>
+            <span class="star">★</span>
+          </div>
+          <input type="hidden" name="rating" id="rating" required />
+
+          <label for="comment">Comment</label>
+          <textarea name="comment" required placeholder="Write your thoughts..."></textarea>
+
+          <button type="submit">Submit Review</button>
+        </form>
+      {% elif session.username %}
+        <p style="color: #aaa;">You can leave a review only after the artwork is delivered.</p>
+      {% else %}
+        <p><a href="/login" style="color: var(--accent);">Log in</a> to leave a review.</p>
+      {% endif %}
+    </section>
+  </main>
+
+  <script>
+    // Review stars interactive rating
+    document.addEventListener('DOMContentLoaded', () => {
+      const stars = document.querySelectorAll('#review-form .star');
+      const ratingInput = document.getElementById('rating');
+      let selectedRating = 0;
+
+      stars.forEach((star, index) => {
+        star.addEventListener('mouseover', () => {
+          stars.forEach((s, i) => {
+            s.style.color = i <= index ? '#ffd700' : '#555';
+          });
+        });
+
+        star.addEventListener('mouseout', () => {
+          stars.forEach((s, i) => {
+            s.style.color = i < selectedRating ? '#ffd700' : '#555';
+          });
+        });
+
+        star.addEventListener('click', () => {
+          selectedRating = index + 1;
+          ratingInput.value = selectedRating;
+          stars.forEach((s, i) => {
+            s.style.color = i < selectedRating ? '#ffd700' : '#555';
+          });
+        });
+      });
+
+      // Report modal toggling
+      const reportBtn = document.getElementById('report-btn');
+      const modalOverlay = document.getElementById('modal-overlay');
+      const closeBtn = document.getElementById('close-report-btn');
+      const cancelBtn = document.getElementById('cancel-report-btn');
+
+      function openModal() {
+        modalOverlay.style.display = 'flex';
+        reportBtn.setAttribute('aria-expanded', 'true');
+        modalOverlay.focus();
+      }
+
+      function closeModal() {
+        modalOverlay.style.display = 'none';
+        reportBtn.setAttribute('aria-expanded', 'false');
+        reportBtn.focus();
+      }
+
+      if(reportBtn) {
+        reportBtn.addEventListener('click', openModal);
+      }
+
+      closeBtn.addEventListener('click', closeModal);
+      cancelBtn.addEventListener('click', closeModal);
+
+      // Close modal on clicking outside the form
+      modalOverlay.addEventListener('click', e => {
+        if(e.target === modalOverlay) closeModal();
+      });
+
+      // Keyboard accessibility: close modal on Escape key
+      document.addEventListener('keydown', e => {
+        if(e.key === "Escape" && modalOverlay.style.display === 'flex') {
+          closeModal();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

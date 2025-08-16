@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Artwork Orders - ArtBlossoms</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            background: url('{{ url_for("static", filename="images/page_image/myord_bg.jpg") }}') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #fff;
+        }
+        .container {
+            max-width: 960px;
+            margin: auto;
+            background-color: rgba(0,0,0,.95);
+            padding: 30px;
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+        .order {
+            background-color: rgba(255,255,255,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .order img {
+            width: 150px;
+            height: auto;
+            border-radius: 5px;
+            object-fit: cover;
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
+        }
+        .order-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .details {
+            flex: 1;
+        }
+        label {
+            font-weight: bold;
+        }
+        select, button {
+            padding: 6px 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+        }
+        button {
+            background-color: #00c2cb;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #00a4ab;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Orders for Your Artworks</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message|safe }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if user.role in ['artist', 'both'] %}
+            {% if orders %}
+                {% for order in orders %}
+                    <div class="order">
+                        <div class="order-info">
+                            <img src="{{ url_for('static', filename='uploads/' + order.artwork_image) }}" alt="Artwork">
+                            <div class="details">
+                                <p><strong>Artwork:</strong> {{ order.artwork_title }}</p>
+                                <p><strong>Buyer:</strong> {{ order.buyer_name }} ({{ order.email }})</p>
+                                <p><strong>Mobile:</strong> {{ order.mobile }}</p>
+                                <p><strong>Address:</strong> {{ order.address }}, {{ order.district }} - {{ order.postcode }}</p>
+                                <p><strong>Message:</strong> {{ order.message }}</p>
+                                <p><strong>Price:</strong> ৳{{ order.total_price }}</p>
+                                <p><strong>Status:</strong> {{ order.status }}</p>
+                                <p><strong>Ordered At:</strong> {{ order.created_at }}</p>
+
+                                <form method="POST" action="{{ url_for('order_bp.artist_orders') }}">
+                                    <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                                    <label for="status">Update Status:</label><br>
+                                    <select name="status" required>
+                                        {% for s in ['Pending', 'Accepted', 'Processing', 'Sent to Delivery', 'Rejected', 'Sold out'] %}
+                                            <option value="{{ s }}" {% if s == order.status %}selected{% endif %}>{{ s }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit">Update</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No orders found for your artworks yet.</p>
+            {% endif %}
+        {% else %}
+            <p>You do not have permission to view this page.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

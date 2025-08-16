@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order {{ artwork.title }} - ArtBlossoms</title>
+  <link rel="icon" href="/static/images/page_image/logo.png" type="image/png" />
+  <style>
+    :root {
+      --primary: #4db8ff;
+      --primary-dark: #3399ff;
+      --bg-dark: rgba(0, 0, 60, 0.88);
+      --text: #ffffff;
+      --text-muted: #aad8ff;
+      --success: #4caf50;
+      --danger: #ef5350;
+      --input-bg: #f9f9f9;
+      --input-text: #000;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('/static/images/page_image/order_bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,30,0.75);
+      z-index: -1;
+    }
+
+    header {
+      background: rgba(0,0,50,0.85);
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header img.logo { height: 45px; cursor: pointer; }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    nav a:hover { text-decoration: underline; }
+
+    .container {
+      max-width: 700px;
+      margin: 60px auto;
+      background: var(--bg-dark);
+      border-radius: 15px;
+      padding: 40px 35px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.7);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.4rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .artwork-title {
+      text-align: center;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+      font-style: italic;
+    }
+
+    form label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--text-muted);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      background: var(--input-bg);
+      color: var(--input-text);
+      box-sizing: border-box;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      box-shadow: 0 0 5px var(--primary);
+      background-color: #eef9ff;
+    }
+
+    textarea { resize: vertical; min-height: 100px; }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 30px;
+      background: var(--primary);
+      color: var(--text);
+      border: none;
+      padding: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .submit-btn:hover { background: var(--primary-dark); }
+
+    .flash-messages {
+      max-width: 700px;
+      margin: 30px auto 0;
+      background: #3399ffcc;
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-weight: 700;
+      text-align: center;
+      box-shadow: 0 0 15px #3399ffaa;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .container { margin: 30px 15px; padding: 25px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/"><img src="/static/images/page_image/logo.png" alt="ArtBlossoms Logo" class="logo" /></a>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/browse_artworks">Browse</a>
+      {% if session.username %}
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="container">
+    <h1>Place Your Order</h1>
+    <div class="artwork-title">
+      Ordering: <strong>{{ artwork.title }}</strong> – ৳{{ "%.2f"|format(artwork.price) }}
+    </div>
+
+    <form method="POST" action="{{ url_for('order_bp.order_artwork', artwork_id=artwork.id) }}">
+      <label for="buyer_name">Full Name *</label>
+      <input type="text" id="buyer_name" name="buyer_name" placeholder="Your full name"
+             value="{{ session.get('first_name','') }} {{ session.get('last_name','') }}" required>
+
+      <label for="mobile">Mobile Number *</label>
+      <input type="tel" id="mobile" name="mobile" placeholder="+8801XXXXXXXXX"
+             value="{{ session.get('mobile','') }}" required>
+
+      <label for="email">Email Address *</label>
+      <input type="email" id="email" name="email" placeholder="your.email@example.com"
+             value="{{ session.get('email','') }}" required>
+
+      <label for="address">Shipping Address *</label>
+      <textarea id="address" name="address" placeholder="Street, city, area..." required></textarea>
+
+      <label for="district_id">District *</label>
+      <select id="district_id" name="district_id" required>
+        <option value="" disabled selected>Select your district</option>
+        {% for district in districts %}
+          <option value="{{ district.id }}">{{ district.name }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="postcode">Postcode</label>
+      <input type="text" id="postcode" name="postcode" placeholder="Optional">
+
+      <label for="message">Additional Message</label>
+      <textarea id="message" name="message" placeholder="Any special requests?"></textarea>
+
+      <button type="submit" class="submit-btn">Place Order - ৳{{ "%.2f"|format(artwork.price) }}</button>
+    </form>
+  </div>
+</body>
+</html>

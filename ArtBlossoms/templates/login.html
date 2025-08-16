@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - ArtBlossoms</title>
+  <link rel="icon" href="/static/images/page_image/logo.png" type="image/png" />
+  <meta name="theme-color" content="#ffffff" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      background: url("/static/images/page_image/login_bg.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: #222;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start; /* Align form to left */
+      padding-left: 60px; /* Space from left edge */
+      user-select: none;
+      overflow: hidden;
+    }
+
+    .form-container {
+      background: rgba(249, 249, 249, 0.95);
+      border-radius: 16px;
+      padding: 50px 40px 60px;
+      width: 360px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+      text-align: center;
+      color: #222;
+      position: relative;
+      user-select: text;
+    }
+
+    .form-container img {
+      width: 85px;
+      margin-bottom: 25px;
+      user-select: none;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+      font-weight: 600;
+      color: #333;
+      letter-spacing: 1px;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 28px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 14px 14px 12px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1.8px solid #ccc;
+      background: #fff;
+      color: #222;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #0077cc;
+      box-shadow: 0 0 8px #a3c8ff;
+    }
+
+    label {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: #999;
+      font-size: 1rem;
+      pointer-events: none;
+      transition: 0.3s ease all;
+      background: transparent;
+    }
+
+    input:focus + label,
+    input:not(:placeholder-shown) + label {
+      top: -10px;
+      font-size: 0.8rem;
+      color: #0077cc;
+      background: rgba(249, 249, 249, 0.95);
+      padding: 0 6px;
+      border-radius: 4px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      background: #0077cc;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 119, 204, 0.4);
+      transition: background-color 0.3s ease, transform 0.15s ease;
+      user-select: none;
+    }
+
+    button:hover {
+      background: #005fa3;
+      box-shadow: 0 6px 22px rgba(0, 95, 163, 0.6);
+      transform: translateY(-3px);
+    }
+
+    button:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 8px rgba(0, 95, 163, 0.3);
+    }
+
+    .error {
+      background: #ffe0e0;
+      padding: 12px 15px;
+      border-radius: 8px;
+      color: #c00;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      animation: shake 0.35s ease;
+      box-shadow: 0 0 8px rgba(255, 0, 0, 0.3);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .register-line {
+      margin-top: 22px;
+      font-size: 0.95rem;
+      color: #444;
+      user-select: text;
+    }
+
+    .register-line a {
+      color: #0077cc;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .register-line a:hover {
+      color: #005fa3;
+      text-decoration: underline;
+    }
+
+    /* Responsive for smaller screens */
+    @media (max-width: 480px) {
+      body {
+        justify-content: center;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      .form-container {
+        width: 100%;
+        padding: 40px 30px 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <form class="form-container" method="POST" autocomplete="off" novalidate>
+    <img src="/static/images/page_image/logo.png" alt="ArtBlossoms Logo" draggable="false" />
+    <h2>Login to ArtBlossoms</h2>
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <div class="input-group">
+      <input type="text" id="username" name="username" placeholder=" " required autocomplete="username" />
+      <label for="username">Username</label>
+    </div>
+
+    <div class="input-group">
+      <input type="password" id="password" name="password" placeholder=" " required autocomplete="current-password" />
+      <label for="password">Password</label>
+    </div>
+
+    <button type="submit" aria-label="Login to ArtBlossoms">Login</button>
+
+    <div class="register-line">
+      Don’t have an account?
+      <a href="{{ url_for('register_bp.register') }}">Register here</a>
+    </div>
+  </form>
+</body>
+</html>

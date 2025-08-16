@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Report {{ reported_username }} - ArtBlossoms</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #e6ecf3;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .report-container {
+      background: rgba(30, 43, 69, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 40px 36px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+      animation: fadeInScale 0.4s ease forwards;
+    }
+
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.85);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    h2 {
+      margin: 0 0 30px 0;
+      font-weight: 600;
+      font-size: 1.8rem;
+      color: #58a6ff;
+      text-align: center;
+      text-shadow: 0 0 8px #58a6ffaa;
+      letter-spacing: 0.03em;
+      user-select: text;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      color: #a3b1c6;
+      user-select: text;
+    }
+
+    select,
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: none;
+      background: #1e2a47;
+      color: #d4d9e6;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: inset 0 0 8px #2c87f0aa;
+      resize: vertical;
+      min-height: 130px;
+      font-family: inherit;
+    }
+
+    select {
+      min-height: 48px;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    select:focus,
+    textarea:focus {
+      outline: none;
+      background: #2a3b6e;
+      box-shadow: 0 0 10px #58a6ffcc;
+      color: #eef2ff;
+    }
+
+    /* Custom arrow for select */
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #58a6ff 50%),
+        linear-gradient(135deg, #58a6ff 50%, transparent 50%);
+      background-position:
+        calc(100% - 20px) calc(1em + 2px),
+        calc(100% - 15px) calc(1em + 2px);
+      background-size: 5px 5px;
+      background-repeat: no-repeat;
+    }
+
+    button {
+      margin-top: 30px;
+      width: 100%;
+      padding: 16px 0;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #ff5f6d, #ffc371);
+      color: #2b2b2b;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 5px 20px #ff8a6588;
+      transition: all 0.35s ease;
+      user-select: none;
+      letter-spacing: 0.05em;
+    }
+
+    button:hover,
+    button:focus {
+      background: linear-gradient(135deg, #ff3a46, #ffa830);
+      box-shadow: 0 8px 28px #ff9f5388;
+      transform: scale(1.05);
+      outline: none;
+    }
+
+    /* Placeholder style */
+    textarea::placeholder {
+      color: #8899bbcc;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="report-container" role="main" aria-labelledby="reportTitle">
+    <form method="POST" action="{{ url_for('report_bp.report_user', username=reported_username) }}" novalidate>
+      <h2 id="reportTitle">Report User: {{ reported_username }}</h2>
+
+      <label for="reason">Reason for reporting</label>
+      <select name="reason" id="reason" required aria-required="true" aria-describedby="reasonHelp">
+        <option value="" disabled selected>-- Select a reason --</option>
+        <option value="Spam">Spam</option>
+        <option value="Inappropriate Content">Inappropriate Content</option>
+        <option value="Harassment">Harassment</option>
+        <option value="Fake Account">Fake Account</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="description" id="descLabel">Additional details (optional)</label>
+      <textarea
+        name="description"
+        id="description"
+        placeholder="Provide more info if needed..."
+        aria-labelledby="descLabel"
+        rows="5"
+        spellcheck="true"
+      ></textarea>
+
+      <button type="submit" aria-label="Submit report for user {{ reported_username }}">Submit Report</button>
+    </form>
+  </main>
+
+</body>
+</html>

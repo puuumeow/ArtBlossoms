@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ user.username }}'s Notifications - ArtBlossoms</title>
+  <link rel="icon" href="/static/images/page_image/logo.png" type="image/png" />
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      background-color: #0e1326;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #eee;
+      min-height: 100vh;
+    }
+
+    /* Profile header */
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .profile-header img {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid #4db8ff;
+      object-fit: cover;
+      box-shadow: 0 0 12px #4db8ffaa;
+      transition: transform 0.3s ease;
+    }
+    .profile-header img:hover {
+      transform: scale(1.05);
+    }
+    .profile-info h1 {
+      font-weight: 900;
+      font-size: 2.2rem;
+      margin: 0;
+      color: #4db8ff;
+      text-shadow: 0 0 8px #4db8ffaa;
+    }
+    .profile-info p.email {
+      font-weight: 600;
+      color: #aaddffcc;
+      margin: 4px 0 12px;
+    }
+    .bio {
+      font-style: italic;
+      max-width: 600px;
+      line-height: 1.5;
+      color: #b0cfffcc;
+    }
+    .bio.empty {
+      font-style: normal;
+      color: #999;
+    }
+
+    /* Notifications */
+    h2 {
+      color: #4db8ff;
+      font-weight: 900;
+      font-size: 2rem;
+      margin-bottom: 30px;
+      text-shadow: 0 0 8px #4db8ffaa;
+    }
+
+    .notification-list {
+      max-width: 850px;
+      margin: auto;
+      padding: 0;
+      list-style: none;
+    }
+
+    .notification-item {
+      background: #1c2a4a;
+      border-radius: 12px;
+      padding: 20px 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 14px rgba(77, 184, 255, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s ease;
+    }
+
+    .notification-item.unread {
+      background: linear-gradient(90deg, #4db8ff, #3399ff);
+      color: #fff;
+      font-weight: bold;
+      box-shadow: 0 0 20px #3399ffcc;
+    }
+
+    .notification-message {
+      flex: 1;
+      font-size: 1.1rem;
+      margin-right: 15px;
+    }
+
+    .notification-time {
+      font-size: 0.85rem;
+      color: #ccc;
+      margin-right: 15px;
+      white-space: nowrap;
+    }
+
+    form {
+      margin: 0;
+    }
+
+    .mark-read-btn {
+      background-color: #28a745;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .mark-read-btn:hover {
+      background-color: #218838;
+    }
+
+    .no-notifications {
+      text-align: center;
+      color: #aaa;
+      font-size: 1.2rem;
+      margin-top: 80px;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 40px;
+      color: #4db8ff;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 1rem;
+      text-shadow: 0 0 5px #4db8ffaa;
+    }
+
+    .back-link:hover {
+      color: #3399ff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Profile Header -->
+  <section class="profile-header">
+    <img src="/static/uploads/{{ user.profile_pic or 'default_profile.png' }}" alt="Profile Picture" />
+    <div class="profile-info">
+      <h1>{{ user.first_name }} {{ user.last_name }} (@{{ user.username }})</h1>
+      <p class="email">Email: {{ user.email }}</p>
+      {% if user.bio %}
+        <p class="bio">{{ user.bio }}</p>
+      {% else %}
+        <p class="bio empty">No bio yet. Add one!</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Notifications -->
+  <h2>Your Report Notifications</h2>
+
+  {% if notifications %}
+    <ul class="notification-list">
+      {% for note in notifications %}
+        <li class="notification-item {% if not note.is_read %}unread{% endif %}">
+          <div class="notification-message">{{ note.message }}</div>
+          <div class="notification-time">{{ note.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+          {% if not note.is_read %}
+            <form method="POST" action="{{ url_for('notification_bp.mark_notification_read') }}">
+              <input type="hidden" name="notification_id" value="{{ note.id }}">
+              <button type="submit" class="mark-read-btn" title="Mark as read">Mark Read</button>
+            </form>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="no-notifications">You have no notifications at the moment.</p>
+  {% endif %}
+
+  <a href="{{ url_for('profile_bp.profile') }}" class="back-link">&larr; Back to Profile</a>
+
+</body>
+</html>

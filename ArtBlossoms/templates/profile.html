@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ user.username }}'s Profile - ArtBlossoms</title>
+  <link rel="icon" href="/static/images/page_image/logo.png" type="image/png" />
+  <style>
+    :root {
+      --primary: #90caf9;
+      --primary-dark: #42a5f5;
+      --bg-dark: rgba(15, 20, 45, 0.95);
+      --accent: #fdd835;
+      --text: #e3f2fd;
+      --text-muted: #b3e5fcaa;
+      --danger: #ef5350;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: url("/static/images/page_image/home_bg.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text);
+      scroll-behavior: smooth;
+      min-height: 100vh;
+    }
+    body::before {
+      content: "";
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 20, 45, 0.75);
+      z-index: -1;
+    }
+    header {
+      background: rgba(10, 15, 40, 0.85);
+      padding: 18px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    }
+    header img.logo { height: 45px; cursor: pointer; }
+    header nav a { color: var(--text-muted); text-decoration: none; font-weight: 600; margin-left: 28px; }
+    header nav a:hover { color: var(--primary); }
+    main { max-width: 1100px; margin: 70px auto; background: var(--bg-dark); border-radius: 22px; padding: 50px 60px; box-shadow: 0 0 40px var(--primary-dark); }
+    .profile-header { display: flex; align-items: center; gap: 30px; flex-wrap: wrap; border-bottom: 3px solid var(--primary); padding-bottom: 30px; }
+    .profile-header img { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary); }
+    .profile-info h1 { font-size: 1.75rem; font-weight: 900; margin: 0 0 12px; }
+    .email { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; }
+    .bio { font-style: italic; color: #c8d9ffcc; max-width: 650px; line-height: 1.6; }
+    .bio.empty { font-style: normal; color: #888; }
+    #bio-form textarea { width: 100%; height: 100px; border-radius: 12px; border: none; padding: 14px; font-size: 1rem; background: var(--accent); color: #111; margin-top: 16px; }
+    #bio-form button { margin-top: 14px; padding: 12px 28px; border: none; border-radius: 12px; background: var(--primary); color: #001f3f; font-weight: bold; cursor: pointer; }
+    .profile-actions { margin-top: 30px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .btn-custom, .btn-report, .btn-dashboard { padding: 12px 24px; font-size: 1rem; font-weight: bold; border: none; border-radius: 14px; cursor: pointer; color: white; }
+    .btn-custom { background: linear-gradient(45deg, var(--primary), var(--primary-dark)); }
+    .btn-report { background: linear-gradient(45deg, var(--danger), #b71c1c); }
+    .btn-dashboard { background: linear-gradient(45deg, #ffa726, #fb8c00); }
+    h2 { margin-top: 50px; border-bottom: 2px solid var(--primary); padding-bottom: 12px; font-size: 1.6rem; }
+    .horizontal-order-card { display: flex; align-items: flex-start; background: rgba(20, 30, 60, 0.95); padding: 24px; border-radius: 16px; margin-bottom: 26px; gap: 20px; }
+    .horizontal-order-card img { width: 140px; height: 140px; object-fit: cover; border-radius: 12px; }
+    .order-info { flex: 1; }
+    .order-title { font-size: 1.4rem; font-weight: bold; color: var(--accent); }
+    .review-link { color: var(--primary); font-weight: bold; text-decoration: none; }
+    .review-link:hover { text-decoration: underline; }
+    .buyer-orders-section { display: none; margin-top: 30px; }
+  </style>
+  <script>
+    function toggleOrders() {
+      const section = document.getElementById('buyer-orders-section');
+      section.style.display = section.style.display === 'none' ? 'block' : 'none';
+    }
+    function toggleCustom() {
+      const section = document.getElementById('custom-request-section');
+      section.style.display = section.style.display === 'none' ? 'block' : 'none';
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <img src="/static/images/page_image/logo.png" class="logo" onclick="location.href='/'" />
+    <nav>
+      <a href="/browse_artworks">Browse Artworks</a>
+      <a href="/logout">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    {% set role = user.role.strip().lower() %}
+    {% set is_artist = role in ['artist', 'both'] %}
+    {% set is_buyer = role in ['buyer', 'both'] %}
+
+    <section class="profile-header">
+      <img src="/static/uploads/{{ user.profile_pic or 'default_profile.png' }}" />
+      <div class="profile-info">
+        <h1>{{ user.first_name }} {{ user.last_name }} (@{{ user.username }})</h1>
+        <p class="email">Email: {{ user.email }}</p>
+        {% if user.bio %}
+          <p class="bio">{{ user.bio }}</p>
+        {% else %}
+          <p class="bio empty">No bio yet. Add one below!</p>
+        {% endif %}
+        {% if is_own_profile %}
+          <form id="bio-form" method="POST" action="/profile/bio">
+            <textarea name="bio">{{ user.bio or '' }}</textarea>
+            <button type="submit">Save Bio</button>
+          </form>
+        {% endif %}
+      </div>
+    </section>
+
+    {% if not is_own_profile %}
+      <div class="profile-actions">
+        <button class="btn-custom" onclick="location.href='/custom_request?username={{ user.username }}'">Ask for Custom Artwork</button>
+        <button class="btn-report" onclick="location.href='/report_user?username={{ user.username }}'">Report User</button>
+      </div>
+    {% endif %}
+
+    {% if is_own_profile and is_artist %}
+      <h2>🧑‍🎨 As an Artist</h2>
+      <div class="profile-actions">
+        <button class="btn-custom" onclick="location.href='{{ url_for('order_bp.artist_orders') }}'">My Artwork Orders</button>
+        <button class="btn-custom" onclick="location.href='{{ url_for('upload_bp.upload_artworks') }}'">Upload Artworks</button>
+        <button class="btn-custom" onclick="location.href='{{ url_for('custom_bp.manage_custom_requests') }}'">Custom Artwork Requests</button>
+        <button class="btn-dashboard" onclick="location.href='/dashboard'">Dashboard</button>
+      </div>
+    {% endif %}
+
+    {% if is_own_profile and is_buyer %}
+      <h2>🛍️ As a Buyer</h2>
+      <div class="profile-actions">
+        <button class="btn-custom" onclick="location.href='{{ url_for('cart_route.view_cart') }}'">My Cart</button>
+        <button class="btn-custom" onclick="toggleOrders()">Order Status</button>
+        <button class="btn-custom" onclick="toggleCustom()">Custom Request Status</button>
+        {% if is_artist %}
+          <button class="btn-dashboard" onclick="location.href='/dashboard'">Dashboard</button>
+        {% endif %}
+      </div>
+
+      <div id="buyer-orders-section" class="buyer-orders-section">
+        <h2>Your Orders</h2>
+        {% if buyer_orders %}
+          {% for order in buyer_orders %}
+            <div class="horizontal-order-card">
+              <img src="/static/uploads/{{ order.artwork_image }}" />
+              <div class="order-info">
+                <h3 class="order-title">{{ order.artwork_title }}</h3>
+                <p><strong>Status:</strong> {{ order.status }}</p>
+                <p><strong>Ordered on:</strong> {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                <p><strong>Total Price:</strong> ৳{{ order.total_price }}</p>
+                {% if order.status == 'Sent to Delivery' %}
+                  <a href="{{ url_for('review_bp.review_artwork', artwork_id=order.artwork_id) }}" class="review-link">Leave a Review</a>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p style="color: var(--text-muted);">You have not placed any orders yet.</p>
+        {% endif %}
+      </div>
+
+      <div id="custom-request-section" class="buyer-orders-section">
+        <h2>🎨 Your Custom Artwork Requests</h2>
+        {% if buyer_custom_requests %}
+          {% for req in buyer_custom_requests %}
+            <div class="horizontal-order-card">
+              <div class="order-info">
+                <h3 class="order-title">To: {{ req.artist_first }} {{ req.artist_last }} (@{{ req.artist_username }})</h3>
+                <p><strong>Description:</strong> {{ req.description }}</p>
+                <p><strong>Status:</strong> {{ req.status }}</p>
+                {% if req.artist_response %}
+                  <p><strong>Artist Response:</strong> {{ req.artist_response }}</p>
+                {% else %}
+                  <p><em>No response yet from the artist.</em></p>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p style="color: var(--text-muted);">You have not made any custom artwork requests yet.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome to ArtBlossoms</title>
+  <link rel="icon" href="{{ url_for('static', filename='images/page_image/logo.png') }}" type="image/png" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url("{{ url_for('static', filename='images/page_image/home_bg.jpg') }}") no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Floating stars */
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: float 8s linear infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+
+    header img.logo {
+      height: 48px;
+    }
+
+    header nav a {
+      color: #ffffff;
+      text-decoration: none;
+      margin-left: 24px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    header nav a:hover {
+      color: #ffd700;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .welcome-box {
+      background-color: rgba(0, 0, 0, 0.85);
+      padding: 40px 50px;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+      max-width: 620px;
+      text-align: center;
+      animation: slideIn 1s ease forwards;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1.typing {
+      font-size: 2.5rem;
+      margin-bottom: 18px;
+      color: #ffffff;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 3px solid #ffd700;
+      width: 0;
+      animation: typing 3s steps(40, end) forwards, blink 0.7s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent }
+    }
+
+    p {
+      font-size: 1.15rem;
+      color: #dddddd;
+      margin: 25px 0 30px;
+      line-height: 1.6;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .buttons a {
+      background: #ffd700;
+      color: #000;
+      padding: 12px 26px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 6px;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s ease;
+    }
+
+    .buttons a:hover {
+      background: #ffcc00;
+    }
+
+    .buttons a::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 200%;
+      background: rgba(255,255,255,0.3);
+      top: -100%;
+      left: 0;
+      transform: rotate(45deg);
+      transition: top 0.5s;
+    }
+
+    .buttons a:hover::after {
+      top: 100%;
+    }
+
+    footer {
+      text-align: center;
+      padding: 18px 10px;
+      background: rgba(0, 0, 0, 0.8);
+      font-size: 0.85rem;
+      color: #ccc;
+      z-index: 10;
+    }
+
+    @media (max-width: 600px) {
+      h1.typing {
+        font-size: 2rem;
+      }
+      .welcome-box {
+        padding: 30px 20px;
+      }
+      .buttons a {
+        font-size: 0.95rem;
+        padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating stars (10 random) -->
+  {% for i in range(10) %}
+    <div class="star" style="top: {{ (range(10)|random) * 10 }}%; left: {{ (range(10)|random) * 10 }}%; animation-delay: {{ loop.index0 * 0.3 }}s;"></div>
+  {% endfor %}
+
+  <header>
+    <img src="{{ url_for('static', filename='images/page_image/logo.png') }}" alt="ArtBlossoms Logo" class="logo" />
+  </header>
+
+  <main>
+    <div class="welcome-box">
+      <h1 class="typing">Welcome to ArtBlossoms</h1>
+      <p>Where we only spread the arts nothing else</p>
+      <div class="buttons">
+        <a href="{{ url_for('login_bp.login') }}">Login</a>
+        <a href="{{ url_for('register_bp.register') }}">Register</a>
+        <a href="{{ url_for('browse_bp.browse_artworks') }}">Continue as Guest</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; {{ current_year }} ArtBlossoms. All rights reserved.
+  </footer>
+</body>
+</html>
