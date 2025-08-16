@@ -41,7 +41,7 @@
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/ArtBlossoms.git
+git clone https://github.com/puuumeow/ArtBlossoms.git
 ```
 
 2. Enter the project directory:
@@ -164,4 +164,4 @@ This project is licensed under the MIT License.
 
 ## Copyright
 
-© 2025 \[Your Name]. All rights reserved. Unauthorized copying or distribution of this project, in whole or in part, is prohibited.
+© 2025 \[Laiba Sumaiya Nazim]. All rights reserved. Unauthorized copying or distribution of this project, in whole or in part, is prohibited.
